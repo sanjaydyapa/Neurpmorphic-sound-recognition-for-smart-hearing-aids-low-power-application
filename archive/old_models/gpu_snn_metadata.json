@@ -1,0 +1,25 @@
+{
+  "accuracy": 0.7890517636280349,
+  "model_type": "GPU-Accelerated Spiking Neural Network",
+  "framework": "PyTorch + snnTorch",
+  "num_features": 382,
+  "architecture": "382 \u2192 512 (LIF) \u2192 256 (LIF) \u2192 10 (LIF)",
+  "classes": [
+    "dog_bark",
+    "children_playing",
+    "car_horn",
+    "air_conditioner",
+    "street_music",
+    "gun_shot",
+    "siren",
+    "engine_idling",
+    "jackhammer",
+    "drilling"
+  ],
+  "training_device": "cuda",
+  "gpu_name": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "training_date": "2025-10-29 23:30:25",
+  "demo_ready": true,
+  "snn_type": "Leaky Integrate-and-Fire (LIF)",
+  "time_steps": 10
+}

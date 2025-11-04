@@ -1,0 +1,18 @@
+{
+  "accuracy": 0.6907924874026569,
+  "model_type": "Enhanced GPU-Accelerated SNN",
+  "architecture": "4-layer (768\u2192512\u2192256\u219210)",
+  "training": "Aggressive with augmentation",
+  "class_names": [
+    "dog_bark",
+    "children_playing",
+    "car_horn",
+    "air_conditioner",
+    "street_music",
+    "gun_shot",
+    "siren",
+    "engine_idling",
+    "jackhammer",
+    "drilling"
+  ]
+}

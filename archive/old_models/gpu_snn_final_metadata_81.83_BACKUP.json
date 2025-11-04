@@ -1,0 +1,17 @@
+{
+  "accuracy": 0.8182546953733394,
+  "model_type": "Optimized GPU SNN",
+  "architecture": "512\u2192384\u2192256\u219210",
+  "class_names": [
+    "dog_bark",
+    "children_playing",
+    "car_horn",
+    "air_conditioner",
+    "street_music",
+    "gun_shot",
+    "siren",
+    "engine_idling",
+    "jackhammer",
+    "drilling"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+    "model_name": "Random Forest",
+    "overall_accuracy": 0.7252090800477897,
+    "sound_classes": [
+        "air_conditioner",
+        "car_horn",
+        "children_playing",
+        "dog_bark",
+        "drilling",
+        "engine_idling",
+        "gun_shot",
+        "jackhammer",
+        "siren",
+        "street_music"
+    ],
+    "class_accuracies": {
+        "air_conditioner": 0.71,
+        "car_horn": 0.5757575757575758,
+        "children_playing": 0.91,
+        "dog_bark": 0.61,
+        "drilling": 0.66,
+        "engine_idling": 0.7741935483870968,
+        "gun_shot": 0.96875,
+        "jackhammer": 0.90625,
+        "siren": 0.3614457831325301,
+        "street_music": 0.79
+    },
+    "feature_count": 361
+}

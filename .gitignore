@@ -1,0 +1,34 @@
+# Exclude large dataset audio files
+urbansound8k_data/audio/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environment
+.env
+venv/
+ENV/
+
+# Large model files (>100MB - GitHub limit)
+trained_models/*.pkl
+source_code/models/*.pkl
+models/*.pkl
+
+# Exclude specific large archived models (>100MB)
+archive/old_models/advanced_neuromorphic_detector.pkl
+archive/old_models/demo_ready_model.pkl
+
+# Other model formats
+*.h5
+*.pth
+*.pt
+
+# IDE
+.vscode/
+.idea/

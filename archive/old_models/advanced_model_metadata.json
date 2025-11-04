@@ -1,0 +1,27 @@
+{
+    "overall_accuracy": 0.7383512544802867,
+    "sound_classes": [
+        "air_conditioner",
+        "car_horn",
+        "children_playing",
+        "dog_bark",
+        "drilling",
+        "engine_idling",
+        "gun_shot",
+        "jackhammer",
+        "siren",
+        "street_music"
+    ],
+    "class_accuracies": {
+        "air_conditioner": 0.74,
+        "car_horn": 0.5454545454545454,
+        "children_playing": 0.88,
+        "dog_bark": 0.62,
+        "drilling": 0.72,
+        "engine_idling": 0.7849462365591398,
+        "gun_shot": 0.875,
+        "jackhammer": 0.8854166666666666,
+        "siren": 0.42168674698795183,
+        "street_music": 0.83
+    }
+}

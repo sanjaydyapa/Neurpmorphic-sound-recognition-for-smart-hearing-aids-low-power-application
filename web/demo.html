@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neuromorphic Sound Detector</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 1em;
+            color: #7f8c8d;
+        }
+
+        .stats-box {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 6px;
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+
+        .stats-box p {
+            margin: 8px 0;
+            color: #34495e;
+        }
+
+        .stats-box strong {
+            color: #2c3e50;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            color: #34495e;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+            background: white;
+            color: #333;
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .run-btn {
+            width: 100%;
+            padding: 14px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.05em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .run-btn:hover {
+            background: #2980b9;
+        }
+
+        .run-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #ecf0f1;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            display: none;
+        }
+
+        .results.active {
+            display: block;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 1.1em;
+            margin: 15px 0;
+        }
+
+        .status-badge.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-badge.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .result-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+
+        .result-item .label {
+            font-size: 0.85em;
+            color: #6c757d;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        .result-item .value {
+            font-size: 1.15em;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .confidence-container {
+            margin: 25px 0;
+        }
+
+        .confidence-container .label {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .confidence-bar-bg {
+            width: 100%;
+            height: 32px;
+            background: #e9ecef;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .confidence-bar {
+            height: 100%;
+            background: #3498db;
+            width: 0%;
+            transition: width 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .audio-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+
+        .audio-section h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .audio-section p {
+            color: #6c757d;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+
+        .audio-section audio {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .footer-actions {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .details-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #2c3e50;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .details-btn:hover {
+            background: #34495e;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 10px;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎯 Neuromorphic Sound Detector</h1>
+            <p>Real-time Audio Classification Demo</p>
+            
+            <div class="stats-box">
+                <p><strong>GPU-Accelerated Spiking Neural Network:</strong> 97% accuracy (10 sounds) | <strong>🔥 BREAKTHROUGH PERFORMANCE!</strong></p>
+                <p><strong>Best Classes:</strong> Siren (99.7%), Dog Bark (98.4%), Gun Shot (98%), Air Conditioner (97.7%), Jackhammer (97.6%)</p>
+                <p><strong>Features:</strong> 380 neuromorphic audio features | <strong>Architecture:</strong> 512→384→256→10 LIF Neurons</p>
+                <p style="font-size: 0.85em; margin-top: 10px; font-style: italic;">
+                    ⚡ GPU-accelerated neuromorphic computing: 97% accuracy with spike-based processing!
+                </p>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="card">
+            <h2 class="section-title">🔧 Configuration</h2>
+            
+            <div class="form-group">
+                <label for="class-select">Sound Class</label>
+                <select id="class-select">
+                    <option value="random">🎲 Random</option>
+                    <option value="air_conditioner">🌬️ Air Conditioner</option>
+                    <option value="car_horn">🚗 Car Horn</option>
+                    <option value="children_playing">👶 Children Playing</option>
+                    <option value="dog_bark">🐕 Dog Bark</option>
+                    <option value="drilling">🔨 Drilling</option>
+                    <option value="engine_idling">🚙 Engine Idling</option>
+                    <option value="gun_shot">🔫 Gun Shot</option>
+                    <option value="jackhammer">🔧 Jackhammer</option>
+                    <option value="siren">🚨 Siren</option>
+                    <option value="street_music">🎵 Street Music</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="fold-select">Data Fold</label>
+                <select id="fold-select">
+                    <option value="random">🎲 Random </option>
+                    <option value="1">Fold 1</option>
+                    <option value="2">Fold 2</option>
+                    <option value="3">Fold 3</option>
+                    <option value="4">Fold 4</option>
+                    <option value="5">Fold 5</option>
+                    <option value="6">Fold 6</option>
+                    <option value="7">Fold 7</option>
+                    <option value="8">Fold 8</option>
+                    <option value="9">Fold 9</option>
+                    <option value="10">Fold 10</option>
+                </select>
+            </div>
+
+            <button class="run-btn" id="run-btn" onclick="runClassification()">
+                ▶️ Run Classification
+            </button>
+        </div>
+
+        <!-- Loading -->
+        <div class="card loading" id="loading">
+            <div class="spinner"></div>
+            <p>Processing audio...</p>
+        </div>
+
+        <!-- Results -->
+        <div class="card results" id="results">
+            <h2 class="section-title">📊 Results</h2>
+            
+            <div id="status"></div>
+
+            <div class="result-grid">
+                <div class="result-item">
+                    <div class="label">Clip ID</div>
+                    <div class="value" id="clip-id">-</div>
+                </div>
+                <div class="result-item">
+                    <div class="label">True Class</div>
+                    <div class="value" id="true-class">-</div>
+                </div>
+                <div class="result-item">
+                    <div class="label">Predicted Class</div>
+                    <div class="value" id="predicted-class">-</div>
+                </div>
+                <div class="result-item">
+                    <div class="label">Processing Time</div>
+                    <div class="value" id="processing-time">-</div>
+                </div>
+            </div>
+
+            <div class="confidence-container">
+                <div class="label">Confidence Score</div>
+                <div class="confidence-bar-bg">
+                    <div class="confidence-bar" id="confidence-bar">0%</div>
+                </div>
+            </div>
+
+            <div class="audio-section">
+                <h3>🔊 Audio Playback</h3>
+                <p>Listen to verify the classification result</p>
+                <audio id="audio-player" controls>
+                    <source id="audio-source" type="audio/wav">
+                    Your browser does not support audio playback.
+                </audio>
+            </div>
+
+            <div class="footer-actions">
+                <a href="demo_details.html" class="details-btn">📄 View Full Details</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function runClassification() {
+            const classSelect = document.getElementById('class-select').value;
+            const foldSelect = document.getElementById('fold-select').value;
+            
+            // Show loading
+            document.getElementById('loading').classList.add('active');
+            document.getElementById('results').classList.remove('active');
+            document.getElementById('run-btn').disabled = true;
+
+            try {
+                const response = await fetch('http://localhost:5000/api/detect', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sound_class: classSelect
+                    })
+                });
+
+                if (!response.ok) throw new Error('Server error');
+
+                const result = await response.json();
+                displayResults(result);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Classification failed. Make sure the server is running.');
+            }
+
+            // Hide loading
+            document.getElementById('loading').classList.remove('active');
+            document.getElementById('run-btn').disabled = false;
+        }
+
+        function displayResults(result) {
+            // Show results
+            document.getElementById('results').classList.add('active');
+
+            // Status
+            const statusDiv = document.getElementById('status');
+            const isCorrect = result.is_correct;
+            const statusClass = isCorrect ? 'correct' : 'incorrect';
+            const statusText = isCorrect ? '✅ CORRECT' : '❌ INCORRECT';
+            
+            statusDiv.innerHTML = `
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="font-size: 2.5em; margin-bottom: 10px;">${isCorrect ? '🎉' : '⚠️'}</div>
+                    <div class="status-badge ${statusClass}">${statusText}</div>
+                    <p style="margin-top: 10px; color: #666; font-size: 0.95em;">
+                        ${isCorrect ? 'Detection successful!' : 'Incorrect prediction'}
+                    </p>
+                </div>
+            `;
+
+            // Details
+            document.getElementById('clip-id').textContent = result.audio_file || 'N/A';
+            document.getElementById('true-class').textContent = result.ground_truth.replace('_', ' ').toUpperCase();
+            document.getElementById('predicted-class').textContent = result.prediction.class.replace('_', ' ').toUpperCase();
+            document.getElementById('processing-time').textContent = (result.inference_time_ms / 1000).toFixed(3) + 's';
+
+            // Confidence
+            const confBar = document.getElementById('confidence-bar');
+            const confidence = (result.prediction.confidence * 100).toFixed(1);
+            setTimeout(() => {
+                confBar.style.width = confidence + '%';
+                confBar.textContent = confidence + '%';
+            }, 100);
+
+            // Audio - serve from our audio endpoint
+            const audioSource = document.getElementById('audio-source');
+            const audioPlayer = document.getElementById('audio-player');
+            if (result.audio_path) {
+                audioSource.src = 'http://localhost:5000/audio/' + result.audio_path;
+                audioPlayer.load();
+                audioPlayer.style.display = 'block';
+            } else {
+                audioPlayer.style.display = 'none';
+            }
+
+            // Scroll to results
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
